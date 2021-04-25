@@ -11,4 +11,21 @@ import './styles/app.css';
 // start the Stimulus application
 import './bootstrap';
 
-console.log("Hello world");
+// Bootstrap & jquery
+// ------------------
+import 'bootstrap';
+import $ from 'jquery';
+
+window.Popper = require('popper.js').default;
+window.$ = window.jQuery = $;
+
+
+// Vue component loader
+// --------------------
+import Vue from 'vue';
+
+Vue.component('app', require('./components/App.vue').default);
+
+new Vue({
+    el : "#app",
+});
