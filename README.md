@@ -24,6 +24,16 @@ composer install
 npm install
 ```
 
+## Environment variables & building assets
+
+inside the project you have to create a new file named `.env.local` and then copy the content of your `.env` file into it. Setup your database credentials inside the `.env.local` file.
+
+Now all you have to do is to compile the assets, run:
+
+```bash
+npm run watch
+```
+
 ## Run the app
 
 You can run Symfony applications with any web server (Apache, nginx, the internal PHP web server, etc.). However, Symfony provides its own web server to make you more productive while developing your applications.
