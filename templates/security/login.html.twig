@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block body %}
+<div class="centered-container">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-header bg-white text-center">
+                        <h2>Sign In</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="container-fluid">
+                            <form method="post">
+                                {% if error %}
+                                <div class="alert alert-danger">
+                                    {{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                                {% endif %}
+                                <div class="form-row justify-content-center">
+                                    <div class="col-sm-8 form-group">
+                                        <label for="inputEmail">Email</label>
+                                        <input type="email" value="{{ last_username }}" name="email" id="inputEmail"
+                                            class="form-control" required autofocus>
+                                    </div>
+                                </div>
+                                <div class="form-row justify-content-center">
+                                    <div class="col-sm-8 form-group">
+                                        <label for="inputPassword">Password</label>
+                                        <input type="password" name="password" id="inputPassword" class="form-control"
+                                            required>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                <div class="form-row justify-content-center">
+                                    <div class="col-sm-8 form-group">
+                                        <div class="checkbox mb-3">
+                                            <label>
+                                                <input type="checkbox" name="_remember_me"> Remember me
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row justify-content-center">
+                                    <div class="col-sm-8 form-group">
+                                        <button class="btn btn-success btn-block" type="submit">Sign in</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
