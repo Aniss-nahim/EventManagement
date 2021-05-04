@@ -3,7 +3,7 @@
 Event management app built with Symfony, Vuejs and Bootsrap.
 
 ## Environment setup
-Before cloning the project make shure make sure you have everything you need in order to run the project. Here is the list of requirements :
+Before cloning the project make shure make sure you have everything you need in order to run the project. Here is a list of requirements :
 
 * PHP version >= 7.1.3
 * composer
@@ -24,7 +24,7 @@ composer install
 npm install
 ```
 
-## Environment variables & building assets
+## setup your environment variables & building assets
 
 inside the project you have to create a new file named `.env.local` and then copy the content of your `.env` file into it. Setup your database credentials inside the `.env.local` file.
 
@@ -44,6 +44,9 @@ php bin/console server:run
 ```
 
 Well done :clap: :clap:, Now your are good to Go !!!
+
+## Class Diagram
+![Lifecycle](./Docs/ClassDiagram.PNG)
 
 --------
 :sparkles: Happy coding :sparkles:
