@@ -28,16 +28,6 @@ class AuthController extends AbstractController
     }
 
     /**
-     * 
-     * @Route("/register", name="app_register", methods={"GET"})
-     * 
-     */
-    public function show() : Response
-    {
-        return $this->render('security/register.html.twig');
-    }
-
-    /**
      * @Route("/logout", name="app_logout")
      */
     public function logout()

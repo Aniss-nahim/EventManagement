@@ -4,6 +4,16 @@ body{
     overflow-x: hidden;
 }
 
+.brand{
+    height: 25px;
+    width: 25px;
+}
+
+.landing-page{
+    background: url('../images/app/shapeLanding.svg') no-repeat left bottom;
+    background-size: 30rem;
+}
+
 .first-container{
     margin-top: 5rem;
 }

@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{parent()}} | Register {% endblock %}
+
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block body %}
+
+<div class="centered-container my-5">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-sm-8">
+                <div class="card">
+                    <div class="card-header bg-white text-center">
+                        <h2>Sign Up</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="container-fluid">
+                            {{form_start(form.email)}}
+                                <div class="form-row justify-content-center">
+                                    <div class="col-sm-6 form-group">
+                                        {{form_row(form.firstName, {'attr': {'id' : 'firstName'}})}}
+                                    </div>
+                                    <div class="col-sm-6 form-group">
+                                        {{form_row(form.lastName, {'attr': {'id' : 'lastName'}})}}
+                                    </div>
+                                </div>
+
+                                <div class="form-row justify-content-center">
+                                    <div class="col-sm-6 form-group">
+                                        {{form_row(form.birthdate, {'attr': {'id' : 'birthdate'}})}}
+                                    </div>
+                                     <div class="col-sm-6 form-group">
+                                        {{form_row(form.email, {'attr': {'id' : 'email'}})}}
+                                    </div>
+                                </div>
+                                <div class="form-row justify-content-center">
+                                    <div class="col-sm-6 form-group">
+                                        {{form_row(form.plainPassword.first, {'attr': {'id' : 'password'}})}}
+                                    </div>
+                                    <div class="col-sm-6 form-group">
+                                        {{form_row(form.plainPassword.second, {'attr': {'id' : 'confirm'}})}}
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row justify-content-center">
+                                    <div class="col-sm-8 form-group">
+                                        <button class="btn btn-success btn-block" type="submit">Sign up</button>
+                                    </div>
+                                </div>
+                            {{ form_end(form)}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

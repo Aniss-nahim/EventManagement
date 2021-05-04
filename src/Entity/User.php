@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields="email", message="Email already taken")
  */
 class User implements UserInterface
 {
@@ -20,21 +23,28 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\NotBlank()
+     * @Assert\Email()
      */
     private $email;
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotBlank()
      */
     private $birthdate;
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank()
+     * @Assert\Length(min=3, max=20)
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank()
+     * @Assert\Length(min=3, max=20)
      */
     private $lastName;
 
@@ -47,6 +57,12 @@ class User implements UserInterface
      * @ORM\Column(type="json")
      */
     private $roles = [];
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Length(min=4, max=4096)
+     */
+    private $plainPassword;
 
     /**
      * @var string The hashed password
@@ -98,6 +114,16 @@ class User implements UserInterface
         $this->roles = $roles;
 
         return $this;
+    }
+
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword($password)
+    {
+        $this->plainPassword = $password;
     }
 
     /**

@@ -29,3 +29,6 @@ Vue.component('app', require('./components/App.vue').default);
 new Vue({
     el : "#app",
 });
+
+// Images
+import logo from './images/app/EventLogo.svg';
