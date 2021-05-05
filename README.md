@@ -46,7 +46,7 @@ php bin/console server:run
 Well done :clap: :clap:, Now your are good to Go !!!
 
 ## Class Diagram
-![Lifecycle](./Docs/ClassDiagram.PNG)
+![Lifecycle](./Docs/ClassDiagram.png)
 
 --------
 :sparkles: Happy coding :sparkles:
