@@ -35,3 +35,8 @@ body{
     height: 30px;
     width: 30px;
 }
+
+.fixed{
+    position: sticky !important;
+    top : 5rem;
+}
