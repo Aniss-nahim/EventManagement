@@ -16,12 +16,8 @@
                         Event
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="dropEvent">
-                        <a class="dropdown-item" href="#">Upcoming</a>
-                        <a class="dropdown-item" href="#">Big ones</a>
-                        {% if app.user %}
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{path('app_logout')}}">Logout</a>
-                        {% endif %}
+                        <a class="dropdown-item" href="#">Discover events</a>
+                        <a class="dropdown-item" href="#">New event</a>
                     </div>
                 </li>
                 {% if not app.user %}
@@ -34,7 +30,7 @@
                 {% else %}
                     <li class="nav-item dropdown">
                     <a class="nav-link" href="#" id="dropProfile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Profile
+                        {{app.user.firstName}} {{app.user.lastName}} <img class="rounded-circle border-success userImage" src="{{asset('storage/profiles/' ~ app.user.image)}}" alt="{{app.user.lastName}} profile image" />
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="dropProfile">
                         <a class="dropdown-item" href="#">View Profile</a>

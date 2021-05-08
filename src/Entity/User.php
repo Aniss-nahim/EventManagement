@@ -54,6 +54,11 @@ class User implements UserInterface
     private $registrationDate;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $image = "default.jpg";
+
+    /**
      * @ORM\Column(type="json")
      */
     private $roles = [];
@@ -205,6 +210,18 @@ class User implements UserInterface
     public function setRegistrationDate(\DateTimeInterface $registrationDate): self
     {
         $this->registrationDate = $registrationDate;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
 
         return $this;
     }
