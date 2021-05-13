@@ -30,6 +30,7 @@ You can run Symfony applications with any web server (Apache, nginx, the interna
 
 
 ```bash
+npm run watch //separate console
 php bin/console server:run
 ```
 
