@@ -114,10 +114,16 @@ class Event
      */
     private $ratings;
 
+    /**
+     * @ORM\OneToMany(targetEntity=EventTag::class, mappedBy="taggedEvent", orphanRemoval=true)
+     */
+    private $eventTags;
+
     public function __construct()
     {
         $this->participations = new ArrayCollection();
         $this->ratings = new ArrayCollection();
+        $this->eventTags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -323,6 +329,36 @@ class Event
             // set the owning side to null (unless already changed)
             if ($rating->getCiriticSubject() === $this) {
                 $rating->setCiriticSubject(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|EventTag[]
+     */
+    public function getEventTags(): Collection
+    {
+        return $this->eventTags;
+    }
+
+    public function addEventTag(EventTag $eventTag): self
+    {
+        if (!$this->eventTags->contains($eventTag)) {
+            $this->eventTags[] = $eventTag;
+            $eventTag->setTaggedEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventTag(EventTag $eventTag): self
+    {
+        if ($this->eventTags->removeElement($eventTag)) {
+            // set the owning side to null (unless already changed)
+            if ($eventTag->getTaggedEvent() === $this) {
+                $eventTag->setTaggedEvent(null);
             }
         }
 
