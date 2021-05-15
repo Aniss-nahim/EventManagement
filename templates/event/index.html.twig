@@ -5,32 +5,48 @@
 {% block body %}
 
 <div class="first-container container">
+    <toast> </toast>
     <div class="row justify-content-center">
         <div class="col-sm-6">
             <div class="card p-3">
                 <div class="row">
                     <div class="col-2"><img src="{{ asset('build/images/EventLogo.svg') }}" alt="{{ app_name }}"/></div>
-                    <div class="col-9"><input class="form-group form-control-lg rounded-pill" type="text" placeholder="Create you event"/> </div>
+                    <div class="col-9">
+                        <button type="button" class="btn btn-block btn-light rounded-pill text-left p-3" data-toggle="modal" data-target="#createEventForm">
+                            Create you event
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                <div class="row justify-content-btween text-center">
+                    <div class="col-4"><i class="fas fa-images fa-lg yellow"></i></div>
+                    <div class="col-4"><i class="fas fa-map-marked-alt fa-lg blue"></i></div>
+                    <div class="col-4"><i class="fas fa-calendar-week fa-lg green"></i></div>
                 </div>
             </div>
             <hr>
         </div>
     </div>
-    
-    <div class="row justify-content-center">
-        <div class="col-sm-12 col-md-3">
-            <div class="card fixed p-2">
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <p class="lead">What event are you interested in ?</p>
-                        <div class="form-group">
-                            <label for="search"><i class="fas fa-search"></i> Search</label>
-                            <input type="text" id="search" class="form-control rounded-pill" maxlength="100">
-                        </div>
-                    </div>
+    <div class="modal fade" id="createEventForm" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <eventcreator csrf={{csrf_token('authenticate')}} createEventUrl={{path('create_event')}}> </eventcreator>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row justify-content-center">
+         <div class="col-sm-12 col-md-3">
+            <div class="card p-3 fixed text-center">
+                <img class="rounded-circle" style="height: 100px; width: 100px; margin: auto;" src="{{asset('storage/profiles/' ~ app.user.image)}}"/>
+                <p class="lead font-weight-bold">{{app.user.firstName}} {{app.user.lastName}} </p>
+                <p class="text-muted"> {{app.user.email}} </p>
+                <a class="btn btn-success rounded-pill mb-1">Profile</a>
+                <a href="#" class="btn btn-outline-success rounded-pill">Concerned Events</a>
+            </div>
+        </div>
+        
         <div class="col-sm-12 col-md-6">
             {% for event in events %}
             <div class="row justify-content-center mb-3">
@@ -41,9 +57,19 @@
                                 <div class="col-1">
                                     <img class="rounded-circle border-success" style="height: 40px; width: 40px;" src="{{asset('/storage/profiles/default.jpg')}}" alt="event creator" />
                                 </div>
-                                <div class="col-10">
+                                <div class="col-9">
                                     <p class="lead m-0 ml-2">  <a href="#" class="text-decoration-none text-success"><strong>{{ event.title }}</strong> </a> </p>
                                     <small class="m-0 ml-2"><i class="fas fa-clock"></i> {{event.createdAt|date('Y-m-d H:m:s')}}</small><br/>
+                                </div>
+                                <div class="col-1">
+                                    <a class="nav-link text-dark" href="#" id="explore-{{event.id}}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="explore-{{event.id}}">
+                                        <a class="dropdown-item" href="{{path('event', {id: event.id } )}}">View</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#"> Somthing</a>
+                                    </div>
                                 </div>
                             </div>
                            
@@ -74,14 +100,20 @@
             </div>
             {% endfor %}
         </div>
-        <div class="col-sm-12 col-md-3">
-            <div class="card p-3 fixed text-center">
-                <img class="rounded-circle" style="height: 100px; width: 100px; margin: auto;" src="{{asset('storage/profiles/' ~ app.user.image)}}"/>
-                <p class="lead font-weight-bold">{{app.user.firstName}} {{app.user.lastName}} </p>
-                <p class="text-muted"> {{app.user.email}} </p>
+       
+       <div class="col-sm-12 col-md-3">
+            <div class="card fixed p-2">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <p class="lead">What event are you interested in ?</p>
+                        <div class="form-group">
+                            <label for="search"><i class="fas fa-search"></i> Search</label>
+                            <input type="text" id="search" class="form-control rounded-pill" maxlength="100">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-   
 </div>
 {% endblock %}

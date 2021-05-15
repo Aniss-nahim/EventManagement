@@ -24,7 +24,12 @@ window.$ = window.jQuery = $;
 // --------------------
 import Vue from 'vue';
 
+// This bus is poviding siblings communication component
+export const eventListener = new Vue();
+
 Vue.component('app', require('./components/App.vue').default);
+Vue.component('eventcreator', require('./components/CreateEvent.vue').default );
+Vue.component('toast', require('./components/Toast.vue').default);
 
 new Vue({
     el : "#app",

@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\EventRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -15,72 +18,107 @@ class Event
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("event:read")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=100)
      * @Assert\NotBlank()
+     * @Groups("event:read")
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=150)
      * @Assert\NotBlank()
+     * @Groups("event:read")
      */
     private $type;
 
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank()
+     * @Groups("event:read")
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\NotBlank()
+     * @Groups("event:read")
      */
     private $startDate;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\NotBlank()
+     * @Groups("event:read")
      */
     private $endDate;
 
     /**
      * @ORM\Column(type="string", length=60)
      * @Assert\NotBlank()
+     * @Groups("event:read")
      */
-    private $state;
+    private $state = "Created"; // Created - Published - Canceled - Deleted - Re-published(Published then edited)
 
     /**
      * @ORM\Column(type="string", length=100)
      * @Assert\NotBlank()
+     * @Groups("event:read")
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
+     * @Groups("event:read")
      */
     private $address;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
+     * @Groups("event:read")
      */
-    private $coverImage;
+    private $coverImage = "default.png";
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups("event:read")
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups("event:read")
      */
     private $updatedAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="participatedEvent", orphanRemoval=true)
+     */
+    private $participations;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="ownedEvents")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups("event:read")
+     */
+    private $owner;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Rating::class, mappedBy="ciriticSubject", orphanRemoval=true)
+     */
+    private $ratings;
+
+    public function __construct()
+    {
+        $this->participations = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -215,6 +253,78 @@ class Event
     public function setCoverImage(string $coverImage): self
     {
         $this->coverImage = $coverImage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Participation[]
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(Participation $participation): self
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations[] = $participation;
+            $participation->setParticipatedEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipation(Participation $participation): self
+    {
+        if ($this->participations->removeElement($participation)) {
+            // set the owning side to null (unless already changed)
+            if ($participation->getParticipatedEvent() === $this) {
+                $participation->setParticipatedEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Rating[]
+     */
+    public function getRatings(): Collection
+    {
+        return $this->ratings;
+    }
+
+    public function addRating(Rating $rating): self
+    {
+        if (!$this->ratings->contains($rating)) {
+            $this->ratings[] = $rating;
+            $rating->setCiriticSubject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRating(Rating $rating): self
+    {
+        if ($this->ratings->removeElement($rating)) {
+            // set the owning side to null (unless already changed)
+            if ($rating->getCiriticSubject() === $this) {
+                $rating->setCiriticSubject(null);
+            }
+        }
 
         return $this;
     }

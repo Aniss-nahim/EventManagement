@@ -27,6 +27,8 @@ class EventRepository extends ServiceEntityRepository
         $entityManger = $this->getEntityManager();
         $query = $entityManger->createQuery(
             "SELECT e FROM App\Entity\Event e
+                WHERE e.state = 'Published' OR
+                e.state = 'Re-published'
              ORDER BY e.createdAt desc"
         );
 

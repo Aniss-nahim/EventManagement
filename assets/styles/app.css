@@ -40,3 +40,19 @@ body{
     position: sticky !important;
     top : 5rem;
 }
+
+.eventCreator{
+    cursor: pointer;
+}
+
+.yellow{
+    color: rgb(245, 245, 92);
+}
+
+.blue{
+    color: rgb(60, 204, 240);
+}
+
+.green{
+    color: rgb(175, 253, 98);
+}
