@@ -28,10 +28,9 @@ class EventType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd h:m:s'
             ])
-            ->add('state', TextType::class)
             ->add('city', TextType::class)
             ->add('address', TextType::class)
-            ->add('coverImage', FileType::class)
+            ->add('coverImage', TextType::class)
         ;
     }
 

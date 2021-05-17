@@ -42,7 +42,7 @@
                 <img class="rounded-circle" style="height: 100px; width: 100px; margin: auto;" src="{{asset('storage/profiles/' ~ app.user.image)}}"/>
                 <p class="lead font-weight-bold">{{app.user.firstName}} {{app.user.lastName}} </p>
                 <p class="text-muted"> {{app.user.email}} </p>
-                <a class="btn btn-success rounded-pill mb-1">Profile</a>
+                <a class="btn btn-success rounded-pill mb-1" href="{{ path('profile', {id: app.user.id})}}">Profile</a>
                 <a href="#" class="btn btn-outline-success rounded-pill">Concerned Events</a>
             </div>
         </div>
@@ -68,7 +68,7 @@
                                     <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="explore-{{event.id}}">
                                         <a class="dropdown-item" href="{{path('event', {id: event.id } )}}">View</a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#"> Somthing</a>
+                                        <a class="dropdown-item" href="#"> Something</a>
                                     </div>
                                 </div>
                             </div>

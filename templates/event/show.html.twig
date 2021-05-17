@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} | {{event.object.title}} {% endblock %}
+
+{% block body %}
+    <div class="container" style="padding-top: 100px;"></div>
+
+    <div class="card">
+
+        <div class="card-header">
+            <h1>{{event.object.title}}</h1>
+            {% include 'includes/rating.html.twig' %}
+        </div>
+
+        <img class="card-img-top" src='/storage/events/{% if event.object.coverImage != "default.png" %}{{ event.object.coverImage }}{% else %}default.png{% endif %}'/>
+
+        <div class="card-body">
+            <h3>{{ event.object.owner.firstName }} {{ event.object.owner.lastName }}</h3>
+            <div>{{ event.object.startDate|date('Y-m-d') }} to {{ event.object.endDate|date('Y-m-d') }}</div>
+            {% if event.owner == true %}<a class="btn-info btn" href="{{ path("event.edit",{"id":event.object.id}) }}">Edit</a>{% endif %}
+        </div>
+    </div>
+
+{% endblock %}

@@ -98,6 +98,11 @@ class Event
     private $updatedAt;
 
     /**
+     * @var float
+     */
+    private $score = 0;
+
+    /**
      * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="participatedEvent", orphanRemoval=true)
      */
     private $participations;
@@ -363,5 +368,25 @@ class Event
         }
 
         return $this;
+    }
+
+    public function setScore()
+    {
+        $count = 0;
+        $sum = 0;
+        foreach($this->ratings as $rating){
+            $count+=1;
+            $sum+=$rating->getRatingScore();
+        }
+        if($count!=0){
+            $this->score = round($sum/$count,1);
+        }
+        else $this->score = 0;
+    }
+
+    public function getScore(): float
+    {
+        $this->setScore();
+        return $this->score;
     }
 }
