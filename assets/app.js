@@ -30,6 +30,7 @@ export const eventListener = new Vue();
 Vue.component('app', require('./components/App.vue').default);
 Vue.component('eventcreator', require('./components/CreateEvent.vue').default );
 Vue.component('toast', require('./components/Toast.vue').default);
+Vue.component('eventfilter', require('./components/FilterEvent.vue').default);
 
 new Vue({
     el : "#app",

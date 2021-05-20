@@ -2,12 +2,17 @@
 
 {% block title %} {{parent()}} {% endblock %}
 
+{% block stylesheets %}
+    {{parent()}}
+    <link rel="stylesheet" href="build/css/tagin.min.css" />
+{% endblock %}
+
 {% block body %}
 
-<div class="first-container container">
+<div class="first-container container-fluid">
     <toast> </toast>
-    <div class="row justify-content-center">
-        <div class="col-sm-6">
+    <div class="row">
+        <div class="col-sm-12 col-md-5 offset-md-3">
             <div class="card p-3">
                 <div class="row">
                     <div class="col-2"><img src="{{ asset('build/images/EventLogo.svg') }}" alt="{{ app_name }}"/></div>
@@ -47,7 +52,7 @@
             </div>
         </div>
         
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-5">
             {% for event in events %}
             <div class="row justify-content-center mb-3">
                 <div class="col-12">
@@ -101,19 +106,14 @@
             {% endfor %}
         </div>
        
-       <div class="col-sm-12 col-md-3">
-            <div class="card fixed p-2">
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <p class="lead">What event are you interested in ?</p>
-                        <div class="form-group">
-                            <label for="search"><i class="fas fa-search"></i> Search</label>
-                            <input type="text" id="search" class="form-control rounded-pill" maxlength="100">
-                        </div>
-                    </div>
-                </div>
-            </div>
+       <div class="col-sm-12 col-md-4">
+            <eventfilter filterEventUrl={{path('event_filter')}}></eventfilter>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="build/js/tagin.min.js" defer></script>
+    {{parent()}}
 {% endblock %}

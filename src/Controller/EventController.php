@@ -43,8 +43,10 @@ class EventController extends AbstractController
      */
     public function store(Request $request, TagRepository $tagRepo, ValidatorInterface $validator, SerializerInterface $serializer) : Response
     {
+        // string json
         $jsonEvent = $request->getContent();
 
+        // string json to object
         $event = $serializer->deserialize($jsonEvent, Event::class, 'json');
         $event->setCreatedAt(new \DateTime());
         $event->setUpdatedAt(new \DateTime());
@@ -91,16 +93,9 @@ class EventController extends AbstractController
      */
     public function filter(Request $request, EventRepository $eventRepo, SerializerInterface $serializer) : Response
     {
-        // string json
-        // $jsonQuery = $request->getContent();
-
         $query = $request->query->all();
        
-        if(!empty($query)){
-
-            // string json to assoc array
-            // $query = json_decode($jsonQuery, true);
-        
+        if(!empty($query)){        
             $events = $eventRepo->filterEvent($query);
         }else{
             $events = $events = $eventRepo->findAllOrderByCreatedAt();

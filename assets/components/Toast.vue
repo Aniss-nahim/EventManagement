@@ -1,6 +1,6 @@
 <template>
-    <div id="toast-container">
-        <div class="toast" role="alert" aria-live="polite" aria-atomic="true" data-delay="6000" style="position: fixed; top: 70px; right: 40px;">
+    <div>
+        <div class="toast" id="toast-container" role="alert" aria-live="polite" aria-atomic="true" data-delay="6000" style="position: fixed; top: 70px; right: 40px;">
             <div role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header" :class="color">
                     <strong class="mr-auto">{{title}}</strong>
@@ -44,5 +44,7 @@
 </script>
 
 <style scoped>
-   
+  #toast-container{
+      z-index: 99999 !important;
+  }
 </style>

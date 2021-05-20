@@ -120,8 +120,8 @@ class EventRepository extends ServiceEntityRepository
         }
 
         // Ordering by field
-        if(!empty($query['orderBy'])){
-            $order = new OrderBy('e.'.$query['orderBy']['field'], $query['orderBy']['order']);
+        if(!empty($query['orderBy']) && !empty($query['order'])){
+            $order = new OrderBy('e.'.$query['orderBy'], $query['order']);
             $qb = $qb->orderBy($order);
         }
 

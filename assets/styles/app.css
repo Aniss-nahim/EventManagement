@@ -4,6 +4,10 @@ body{
     overflow-x: hidden;
 }
 
+#toast-container{
+    z-index: 100 !important;
+}
+
 .brand{
     height: 25px;
     width: 25px;
