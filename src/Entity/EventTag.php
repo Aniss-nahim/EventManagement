@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\EventTagRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -14,12 +15,14 @@ class EventTag
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("event:read")
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=Tag::class, inversedBy="eventTags")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("event:read")
      */
     private $tag;
 

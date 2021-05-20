@@ -11,17 +11,20 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Repository\EventRepository;
+use App\Repository\TagRepository;
 use App\Entity\Event;
+use App\Entity\EventTag;
+use App\Entity\Tag;
 use App\Form\EventType;
 
 
 /**
- * @IsGranted("ROLE_USER")
+ * IsGranted("ROLE_USER")
  */
 class EventController extends AbstractController
 {
     /**
-     * @Route("/events", name="events")
+     * @Route("/events", name="events", methods={"GET"})
      * 
      */
     public function index(EventRepository $eventRepo): Response
@@ -38,7 +41,7 @@ class EventController extends AbstractController
     /**
      * @Route("/event", name="create_event", methods={"POST"})
      */
-    public function store(Request $request, EventRepository $eventRepo, ValidatorInterface $validator, SerializerInterface $serializer) : Response
+    public function store(Request $request, TagRepository $tagRepo, ValidatorInterface $validator, SerializerInterface $serializer) : Response
     {
         $jsonEvent = $request->getContent();
 
@@ -52,6 +55,13 @@ class EventController extends AbstractController
         
         if(count($errors) == 0){
             $eventManager = $this->getDoctrine()->getManager();
+
+            // find default tag and set eventTag
+            $tag = $tagRepo->findOneBy(array('tagName', 'All'));
+            $eventTag = new EventTag();
+            $eventTag->setTaggedEvent($event);
+            $eventTag->setTag($tag);
+
             $eventManager->persist($event);
             $eventManager->flush();
             return $this->json(['success' => true, 'data'=>$event], 201, [], ['groups' => 'event:read']);
@@ -74,5 +84,28 @@ class EventController extends AbstractController
         //     ]);
         // }
         // return $this->redirectToRoute('events');
+    }
+
+    /**
+     * @Route("/events/filter", name="event_filter", methods={"GET"})
+     */
+    public function filter(Request $request, EventRepository $eventRepo, SerializerInterface $serializer) : Response
+    {
+        // string json
+        // $jsonQuery = $request->getContent();
+
+        $query = $request->query->all();
+       
+        if(!empty($query)){
+
+            // string json to assoc array
+            // $query = json_decode($jsonQuery, true);
+        
+            $events = $eventRepo->filterEvent($query);
+        }else{
+            $events = $events = $eventRepo->findAllOrderByCreatedAt();
+        }
+
+        return $this->json(['success' => true, 'count'=> count($events), 'data' => $events], 200, [], ['groups' => 'event:read']);
     }
 }

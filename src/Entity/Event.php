@@ -110,12 +110,13 @@ class Event
     private $owner;
 
     /**
-     * @ORM\OneToMany(targetEntity=Rating::class, mappedBy="ciriticSubject", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Rating::class, mappedBy="ciriticSubject", cascade={"persist"},  orphanRemoval=true)
      */
     private $ratings;
 
     /**
-     * @ORM\OneToMany(targetEntity=EventTag::class, mappedBy="taggedEvent", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=EventTag::class, mappedBy="taggedEvent", cascade={"persist"},  orphanRemoval=true)
+     * @Groups("event:read")
      */
     private $eventTags;
 

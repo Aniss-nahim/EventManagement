@@ -4,6 +4,8 @@ namespace App\DataFixtures;
 
 use App\Entity\User;
 use App\Entity\Event;
+use App\Entity\Tag;
+use App\Entity\EventTag;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -23,6 +25,11 @@ class UserFixture extends Fixture
 
         $password = '123456';
 
+        $tag = new Tag();
+        $tag->setTagName("All");
+        $manager->persist($tag);
+        $manager->flush();
+
         for($i = 0; $i<3; $i++){
             $user = new User();
     
@@ -40,7 +47,7 @@ class UserFixture extends Fixture
 
             for($j = 0; $j<5; $j++){
                 $event = new Event();
-    
+
                 $event->setTitle($faker->sentence($nbWords = 3));
                 $event->setType($faker->word);
                 $event->setDescription($faker->paragraph());
@@ -53,9 +60,14 @@ class UserFixture extends Fixture
                 $event->setCreatedAt(new \DateTime());
                 $event->setUpdatedAt(new \DateTime());
                 $event->setOwner($user);
-    
+
+                $eventTag = new EventTag();
+                $eventTag->setTag($tag);
+                $eventTag->setTaggedEvent($event);
+
+                $event->addEventTag($eventTag);
+
                 $manager->persist($event);
-    
                 $manager->flush();
             }
         }
