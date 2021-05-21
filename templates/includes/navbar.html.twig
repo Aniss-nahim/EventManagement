@@ -30,7 +30,7 @@
                 {% else %}
                     <li class="nav-item dropdown">
                     <a class="nav-link" href="#" id="dropProfile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{app.user.firstName}} {{app.user.lastName}} <img class="rounded-circle border-success userImage" src="{{asset('storage/profiles/' ~ app.user.image)}}" alt="{{app.user.lastName}} profile image" />
+                        <img class="rounded-circle border-success userImage" src="{{asset('storage/profiles/' ~ app.user.image)}}" alt="{{app.user.lastName}} profile image" /> {{app.user.firstName}} {{app.user.lastName}}
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="dropProfile">
                         <a class="dropdown-item" href="#">View Profile</a>

@@ -30,12 +30,17 @@ class EventController extends AbstractController
     public function index(EventRepository $eventRepo): Response
     {
         $events = $eventRepo->findAllOrderByCreatedAt();
+        return $this->render('event/index.html.twig', ['events' => $events]);
+    }
 
-        $event = new Event();
+    /**
+     * @Route("/events/fetch", name="fetch_events", methods={"GET"})
+     */
+    public function fetchEvents(EventRepository $eventRepo) : Response
+    {
+        $events = $eventRepo->findAllOrderByCreatedAt();
 
-        return $this->render('event/index.html.twig', [
-            'events' => $events
-        ]);
+        return $this->json(['success'=>true, 'data'=>$events], 200, [], ['groups' => 'event:read']);
     }
 
     /**
@@ -59,12 +64,13 @@ class EventController extends AbstractController
             $eventManager = $this->getDoctrine()->getManager();
 
             // find default tag and set eventTag
-            $tag = $tagRepo->findOneBy(array('tagName', 'All'));
+            $tag = $tagRepo->findOneBy(array('tagName'=> 'All'));
             $eventTag = new EventTag();
             $eventTag->setTaggedEvent($event);
             $eventTag->setTag($tag);
 
             $eventManager->persist($event);
+            $eventManager->persist($eventTag);
             $eventManager->flush();
             return $this->json(['success' => true, 'data'=>$event], 201, [], ['groups' => 'event:read']);
         }else{

@@ -156,9 +156,9 @@ export default {
                         }
                         this.displayError("Faild to create event.");
                     });
-            }else{
-                this.displayError("Please enter a correct date and time.");
-            }
+                }else{
+                    this.displayError("Please enter a correct date and time.");
+                }
         },
 
         displayError(message){

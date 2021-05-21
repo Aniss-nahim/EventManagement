@@ -4,12 +4,12 @@
 
 {% block stylesheets %}
     {{parent()}}
-    <link rel="stylesheet" href="build/css/tagin.min.css" />
+    <link rel="stylesheet" href="{{ asset('css/tagin.min.css')}}" />
 {% endblock %}
 
 {% block body %}
 
-<div class="first-container container-fluid">
+<div class="first-container container-fluid mb-5">
     <toast> </toast>
     <div class="row">
         <div class="col-sm-12 col-md-5 offset-md-3">
@@ -42,7 +42,7 @@
         </div>
     </div>
     <div class="row justify-content-center">
-         <div class="col-sm-12 col-md-3">
+        <div class="col-sm-12 col-md-3">
             <div class="card p-3 fixed text-center">
                 <img class="rounded-circle" style="height: 100px; width: 100px; margin: auto;" src="{{asset('storage/profiles/' ~ app.user.image)}}"/>
                 <p class="lead font-weight-bold">{{app.user.firstName}} {{app.user.lastName}} </p>
@@ -51,69 +51,19 @@
                 <a href="#" class="btn btn-outline-success rounded-pill">Concerned Events</a>
             </div>
         </div>
-        
-        <div class="col-sm-12 col-md-5">
-            {% for event in events %}
-            <div class="row justify-content-center mb-3">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-white">
-                            <div class="row align-items-center justify-content-left">
-                                <div class="col-1">
-                                    <img class="rounded-circle border-success" style="height: 40px; width: 40px;" src="{{asset('/storage/profiles/default.jpg')}}" alt="event creator" />
-                                </div>
-                                <div class="col-9">
-                                    <p class="lead m-0 ml-2">  <a href="#" class="text-decoration-none text-success"><strong>{{ event.title }}</strong> </a> </p>
-                                    <small class="m-0 ml-2"><i class="fas fa-clock"></i> {{event.createdAt|date('Y-m-d H:m:s')}}</small><br/>
-                                </div>
-                                <div class="col-1">
-                                    <a class="nav-link text-dark" href="#" id="explore-{{event.id}}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-h"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="explore-{{event.id}}">
-                                        <a class="dropdown-item" href="{{path('event', {id: event.id } )}}">View</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#"> Somthing</a>
-                                    </div>
-                                </div>
-                            </div>
-                           
-                        </div>
-                        <div class="card-body p-0">
-                            <img class="img-fluid" src="{{asset('/storage/events/' ~ event.coverImage)}}" alt="" />
-                            <div class="alert m-2" role="alert">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h6> <i class="fas fa-map-marker-alt"></i> {{event.address}}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                           
-                        </div>
-                        <div class="card-footer bg-white">
-                            <div class="row justify-content-btween m-2">
-                                <div class="col-sm-6">
-                                    <p> <i class="fas fa-calendar-day pr-2"></i><strong>Starts On : </strong>{{event.startDate|date("Y-m-d")}}</p>
-                                </div>
-                                <div class="col-sm-6 text-right">
-                                    <p> <i class="fas fa-calendar-day pr-2"></i><strong>Ends On : </strong> {{event.endDate|date("Y-m-d")}}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-       
-       <div class="col-sm-12 col-md-4">
-            <eventfilter filterEventUrl={{path('event_filter')}}></eventfilter>
+        <div class="col-sm-12 col-md-9">
+            {# Event displayer #}
+            <events eventsUrl={{path('fetch_events')}} 
+                    filterEventUrl={{path('event_filter')}} 
+                    userImages={{asset('storage/profiles')}} 
+                    eventCovers={{asset('storage/events')}}>
+            </events>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block javascripts %}
-    <script src="build/js/tagin.min.js" defer></script>
+    <script src="{{asset('js/tagin.min.js')}}" defer></script>
     {{parent()}}
 {% endblock %}

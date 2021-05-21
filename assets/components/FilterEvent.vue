@@ -135,7 +135,7 @@
                     axios.get(this.filtereventurl, { params: this.params })
                         .then(response => {
                             this.loading = false;
-                            console.log(response);
+                            this.$emit('filter', response.data.data);
                             this.notify({
                                 title : 'Notification',
                                 date : "",
@@ -168,6 +168,7 @@
                     orderBy : "createdAt",
                     order : "DESC"
                 }
+                this.$emit('clear');
             },
 
             dateValidation(){
