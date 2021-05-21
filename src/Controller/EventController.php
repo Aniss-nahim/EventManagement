@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Participation;
 use App\Entity\Rating;
 use App\Entity\User;
 use App\Form\ProfileType;
@@ -13,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Repository\EventRepository;
@@ -28,7 +30,8 @@ class EventController extends AbstractController
 
     /**
      * @Route("/events", name="events")
-     * 
+     * @param EventRepository $eventRepo
+     * @return Response
      */
     public function index(EventRepository $eventRepo): Response
     {
@@ -43,6 +46,11 @@ class EventController extends AbstractController
 
     /**
      * @Route("/event", name="create_event", methods={"POST"})
+     * @param Request $request
+     * @param EventRepository $eventRepo
+     * @param ValidatorInterface $validator
+     * @param SerializerInterface $serializer
+     * @return Response
      */
     public function store(Request $request, EventRepository $eventRepo, ValidatorInterface $validator, SerializerInterface $serializer) : Response
     {
@@ -81,18 +89,24 @@ class EventController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        /** @var User $user */
+        /**
+         * @var User $user
+         */
         $user = $this->getUser();
+
         /**
          * @var boolean is true if the current user is the owner of the event
          */
         $owner = false;
 
+        //if event exists
         if($event){
 
             //deal with rating score
             $rating_score = (int)$request->query->get("rating");
+
             if($rating_score!=null) {
+
                 $rating = new Rating();
                 $rating->setCritic($user);
                 $rating->setCiriticSubject($event);
@@ -102,15 +116,16 @@ class EventController extends AbstractController
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($rating);
 
+                //ORM persist rating to both ManyToOne entities
                 $user->addRating($rating);
                 $event->addRating($rating);
+
 
                 $entityManager->flush();
                 dump($rating);
             }
 
-            dump($user);
-            dump($event);
+            dump($user,$event);
 
             //check if current user is owner of event
             if($event->getOwner()->getId()==$user->getId()){
@@ -118,7 +133,10 @@ class EventController extends AbstractController
             }
 
              return $this->render('event/show.html.twig', [
-                 'event' => ['owner' => $owner, 'object' => $event, 'scoreRounded' => round($event->getScore()), 'ratingNumber' => count($event->getRatings())]
+                 'event' => ['owner' => $owner,
+                     'object' => $event,
+                     'scoreRounded' => round($event->getScore()),
+                     'ratingNumber' => count($event->getRatings())]
              ]);
         }
         return $this->redirectToRoute('events');
@@ -148,5 +166,46 @@ class EventController extends AbstractController
             'eventForm' => $form->createView(),
             'event' => $event
         ]);
+    }
+
+    /**
+     * @Route("/event/{id}/participate", name="event.participate")
+     * @param Event $event
+     * @param AuthenticationUtils $authenticationUtils
+     * @param Request $request
+     * @return Response
+     */
+    public function participate(Event $event, AuthenticationUtils $authenticationUtils, Request $request): Response
+    {
+
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+
+        $participationType = (int)$request->query->get("participationType");
+        if($participationType!=null) {
+
+            $participation = new Participation();
+            $participation->setParticipantUser($user);
+            $participation->setParticipatedEvent($event);
+            $participation->setType($participationType);
+
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($participation);
+
+            //ORM persist participation to both ManyToOne entities
+            $user->addParticipation($participation);
+            $event->addParticipation($participation);
+
+
+            $entityManager->flush();
+            dump($participation,$user,$event);
+        }
+
+        $route = "event/".$event->getId();
+
+        return $this->redirectToRoute($route);
     }
 }

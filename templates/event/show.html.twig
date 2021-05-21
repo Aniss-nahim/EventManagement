@@ -10,6 +10,11 @@
         <div class="card-header">
             <h1>{{event.object.title}}</h1>
             {% include 'includes/rating.html.twig' %}
+            <div class="row">
+                <div class="col-4"> <a class="btn btn-secondary">Going</a> </div>
+                <div class="col-4"> <a class="btn btn-secondary">Interested</a> </div>
+                <div class="col-4"> <a class="btn btn-primary"><i class="fas fa-heart"></i>Like</a> </div>
+            </div>
         </div>
 
         <img class="card-img-top" src='/storage/events/{% if event.object.coverImage != "default.png" %}{{ event.object.coverImage }}{% else %}default.png{% endif %}'/>
@@ -17,7 +22,9 @@
         <div class="card-body">
             <h3>{{ event.object.owner.firstName }} {{ event.object.owner.lastName }}</h3>
             <div>{{ event.object.startDate|date('Y-m-d') }} to {{ event.object.endDate|date('Y-m-d') }}</div>
+
             {% if event.owner == true %}<a class="btn-info btn" href="{{ path("event.edit",{"id":event.object.id}) }}">Edit</a>{% endif %}
+
         </div>
     </div>
 
