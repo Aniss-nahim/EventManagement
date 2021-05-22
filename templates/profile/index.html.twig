@@ -4,33 +4,35 @@
 {% form_theme profileForm 'bootstrap_4_layout.html.twig' %}
 {% block body %}
 
-<div class="card">
+    <div class="card">
 
-    <div class="card-header bg-white text-center">
-        <h2>Profile</h2>
-    </div>
+        <div class="card-header bg-white text-center">
+            <h2>Profile</h2>
+        </div>
 
-    <img class="card-img-top" src="/storage/profiles/{% if user.image != "default.jpg" %}{{ user.image }}{% else %}default.jpg{% endif %}" alt="Card image cap">
+        <img class="card-img-top" src="/storage/profiles/{% if user.image != "default.jpg" %}{{ user.image }}{% else %}default.jpg{% endif %}" alt="Card image cap">
 
-    <div class="card-body">
-        <div class="container-fluid">
-            {{ form_start(profileForm) }}
-            <div class="alert-danger">
-                {{ form_errors(profileForm) }}
-            </div>
-            <div class="form-row justify-content-center">
-                <div class="col-sm-6 form-group">
-                    {{ form_widget(profileForm, {'attr': {'type':'password'}}) }}
+        <div class="card-body">
+            <div class="container-fluid">
+                {{ form_start(profileForm) }}
+                <div class="alert-danger">
+                    {{ form_errors(profileForm) }}
                 </div>
-            </div>
-            <div class="form-row justify-content-center">
-                <div class="col-sm-8 form-group">
-                    <button class="btn btn-success btn-block" type="submit">Update</button>
+                <div class="form-row justify-content-center">
+                    <div class="col-sm-6 form-group">
+                        {{ form_widget(profileForm, {'attr': {'type':'password'}}) }}
+                    </div>
                 </div>
+                <div class="form-row justify-content-center">
+                    <div class="col-sm-8 form-group">
+                        <button class="btn btn-success btn-block" type="submit">Update</button>
+                    </div>
+                </div>
+                {{ form_end(profileForm) }}
             </div>
-            {{ form_end(profileForm) }}
         </div>
     </div>
-</div>
+
+    {% include 'includes/participation-table-profile.html.twig' %}
 
 {% endblock %}
