@@ -2,9 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Participation;
 use App\Entity\Rating;
 use App\Entity\User;
 use App\Form\ProfileType;
+use App\Repository\ParticipationRepository;
+use App\Repository\RatingRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Repository\EventRepository;
@@ -28,7 +33,8 @@ class EventController extends AbstractController
 
     /**
      * @Route("/events", name="events")
-     * 
+     * @param EventRepository $eventRepo
+     * @return Response
      */
     public function index(EventRepository $eventRepo): Response
     {
@@ -43,6 +49,11 @@ class EventController extends AbstractController
 
     /**
      * @Route("/event", name="create_event", methods={"POST"})
+     * @param Request $request
+     * @param EventRepository $eventRepo
+     * @param ValidatorInterface $validator
+     * @param SerializerInterface $serializer
+     * @return Response
      */
     public function store(Request $request, EventRepository $eventRepo, ValidatorInterface $validator, SerializerInterface $serializer) : Response
     {
@@ -77,48 +88,102 @@ class EventController extends AbstractController
      * @param EventRepository $eventRepo
      * @return Response
      */
-    public function show(Event $event, Request $request, EventRepository $eventRepo) : Response
+    public function show(Event $event, Request $request, RatingRepository $ratingRepo,  ParticipationRepository $participationRepo) : Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        /** @var User $user */
+        /**
+         * @var User $user
+         */
         $user = $this->getUser();
+
         /**
          * @var boolean is true if the current user is the owner of the event
          */
         $owner = false;
 
+        //if event exists
         if($event){
 
             //deal with rating score
             $rating_score = (int)$request->query->get("rating");
+            $entityManager = $this->getDoctrine()->getManager();
+
             if($rating_score!=null) {
-                $rating = new Rating();
-                $rating->setCritic($user);
-                $rating->setCiriticSubject($event);
-                $rating->setRatingScore($rating_score);
 
+                $rateID = null;
+                $ratings = $ratingRepo->findAll();
 
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($rating);
+                //we check if rating had already been done or not
+                foreach($ratings as $rate){
+                    if($rate->getCritic()->getId()==$user->getId() && $rate->getCiriticSubject()->getId()==$event->getId()){
+                        $rateID = $rate->getId();
+                    }
+                }
 
-                $user->addRating($rating);
-                $event->addRating($rating);
+                //we want to update our rating of the event
+                if($rateID!=null){
+                    $rating = $ratingRepo->find($rateID);
+                    $rating->setRatingScore($rating_score);
+                    $entityManager->persist($rating);
+                }
+                else{
+                    $rating = new Rating();
+                    $rating->setCritic($user);
+                    $rating->setCiriticSubject($event);
+                    $rating->setRatingScore($rating_score);
+
+                    //persist it first so that doctrine sets it's id
+                    $entityManager->persist($rating);
+
+                    //ORM persist rating to both ManyToOne entities
+                    $user->addRating($rating);
+                    $event->addRating($rating);
+                }
 
                 $entityManager->flush();
                 dump($rating);
             }
 
-            dump($user);
-            dump($event);
+            dump($user,$event);
 
             //check if current user is owner of event
             if($event->getOwner()->getId()==$user->getId()){
                 $owner = true;
             }
 
+            //count participations
+
+            $goingList = new ArrayCollection();
+            $interestedList = new ArrayCollection();
+            $likeList = new ArrayCollection();
+            $participations = $participationRepo->findAll();
+            foreach ($participations as $part){
+                if($part->getParticipatedEvent()->getId()==$event->getId()) {
+                    if ($part->getType() == "Going") {
+                        $goingList->add($part);
+                    }
+                    if ($part->getType() == "Interested"){
+                        $interestedList->add($part);
+                    }
+                    if($part->getType()=="Like"){
+                        $likeList->add($part);
+                    }
+                }
+            }
+
              return $this->render('event/show.html.twig', [
-                 'event' => ['owner' => $owner, 'object' => $event, 'scoreRounded' => round($event->getScore()), 'ratingNumber' => count($event->getRatings())]
+                 'event' => ['owner' => $owner,
+                     'object' => $event,
+                     'scoreRounded' => round($event->getScore()),
+                     'ratingNumber' => count($event->getRatings()),
+                     'goingNumber' => $goingList->count() ,
+                     'interestedNumber' => $interestedList->count(),
+                     'likeNumber' => $likeList->count(),
+                     'goingList' => $goingList,
+                     'interestedList' => $interestedList,
+                     'likeList' => $likeList
+                 ]
              ]);
         }
         return $this->redirectToRoute('events');
@@ -148,5 +213,99 @@ class EventController extends AbstractController
             'eventForm' => $form->createView(),
             'event' => $event
         ]);
+    }
+
+    /**
+     * @Route("/event/{id}/participate", name="event.participate", methods={"GET"})
+     * @param Event $event
+     * @param AuthenticationUtils $authenticationUtils
+     * @param Request $request
+     * @return Response
+     */
+    public function participate(Event $event, AuthenticationUtils $authenticationUtils, Request $request, ParticipationRepository $participationRepo): Response
+    {
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+
+        //deal with rating score
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $participationType = (String)$request->query->get("participationType");
+
+        if($participationType!=null) {
+
+            $participationID = null;
+            $participations = $participationRepo->findAll();
+
+            //we check if rating had already been done or not
+            foreach ($participations as $part) {
+
+                //get participation id to be able to change it
+                if ($part->getParticipantUser()->getId() == $user->getId() && $part->getParticipatedEvent()->getId() == $event->getId()) {
+                    $participationID = $part->getId();
+                }
+            }
+
+
+            //we want to update our rating of the event
+            if ($participationID != null) {
+                $participation = $participationRepo->find($participationID);
+                $participation->setType($participationType);
+                $entityManager->persist($participation);
+            } else {
+                $participation = new Participation();
+                $participation->setParticipantUser($user);
+                $participation->setParticipatedEvent($event);
+                $participation->setType($participationType);
+                $participation->setDate(date_create());
+
+                //persist it first so that doctrine sets it's id
+                $entityManager->persist($participation);
+
+                //ORM persist rating to both ManyToOne entities
+                $user->addParticipation($participation);
+                $event->addParticipation($participation);
+            }
+        }
+
+            $entityManager->flush();
+
+            dump($participation,$user,$event);
+
+
+        return $this->redirectToRoute('event', ['id' => $event->getId()]);
+    }
+
+    /**
+     * @Route("/participation/{id}/delete/", name="event.participation.delete", methods={"GET"})
+     * @param $id
+     * @param AuthenticationUtils $authenticationUtils
+     * @param Request $request
+     * @param ParticipationRepository $participationRepo
+     * @param EventRepository $eventRepo
+     * @return Response
+     */
+    public function deleteParticipation($id, AuthenticationUtils $authenticationUtils, Request $request, ParticipationRepository $participationRepo, EventRepository $eventRepo): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $participation = $participationRepo->find($id);
+
+        /**
+         * @var User user
+         */
+        $user = $this->getUser();
+
+        $event = $eventRepo->find($participation->getParticipatedEvent()->getId());
+
+        $entityManager->remove($participation);
+
+        $user->removeParticipation($participation);
+        $event->removeParticipation($participation);
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('profile', ['id' => $user->getId()]);
     }
 }
