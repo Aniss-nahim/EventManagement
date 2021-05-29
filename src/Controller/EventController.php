@@ -197,7 +197,6 @@ class EventController extends AbstractController
      */
     public function edit(Event $event, Request $request): Response
     {
-        dump($event);
         $form = $this->createForm(EventType::class,$event);
 
         $form->handleRequest($request);
