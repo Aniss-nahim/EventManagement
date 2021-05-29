@@ -56,3 +56,8 @@ body{
 .green{
     color: rgb(175, 253, 98);
 }
+
+.profile-wallpiper{
+    background: url('../images/app/profileWall.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
