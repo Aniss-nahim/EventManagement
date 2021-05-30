@@ -41,7 +41,9 @@ class ProfileController extends AbstractController
         $goingList = new ArrayCollection();
         $interestedList = new ArrayCollection();
         $likeList = new ArrayCollection();
+
         $participations = $participationRepo->findAll();
+        
         foreach ($participations as $part){
             if($part->getParticipantUser()->getId()==$user->getId()) {
                 if ($part->getType() == "Going") {
