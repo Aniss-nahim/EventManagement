@@ -66,7 +66,6 @@ class Tag
     {
         if (!$this->eventTags->contains($eventTag)) {
             $this->eventTags[] = $eventTag;
-            $eventTag->setTaggedEvent($this);
         }
 
         return $this;

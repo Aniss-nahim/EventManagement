@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ProfileController extends AbstractController
@@ -36,34 +35,13 @@ class ProfileController extends AbstractController
             $form = $this->createForm(ProfileType::class,$user);
         }
 
-        //count participations
-
-        $goingList = new ArrayCollection();
-        $interestedList = new ArrayCollection();
-        $likeList = new ArrayCollection();
-
-        $participations = $participationRepo->findAll();
-        
-        foreach ($participations as $part){
-            if($part->getParticipantUser()->getId()==$user->getId()) {
-                if ($part->getType() == "Going") {
-                    $goingList->add($part);
-                }
-                if ($part->getType() == "Interested"){
-                    $interestedList->add($part);
-                }
-                if($part->getType()=="Like"){
-                    $likeList->add($part);
-                }
-            }
-        }
+        $goingList = $participationRepo->findByUserAndType($user->getId(), "Going");
+        $interestedList = $participationRepo->findByUserAndType($user->getId(), "Interested");
+        $likeList = $participationRepo->findByUserAndType($user->getId(), "Like");
 
         return $this->render('profile/index.html.twig', [
             'profileForm' => $form->createView(),
             'user' => $user,
-            'goingNumber' => $goingList->count() ,
-            'interestedNumber' => $interestedList->count(),
-            'likeNumber' => $likeList->count(),
             'goingList' => $goingList,
             'interestedList' => $interestedList,
             'likeList' => $likeList

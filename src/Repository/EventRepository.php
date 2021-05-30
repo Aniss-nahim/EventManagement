@@ -49,8 +49,7 @@ class EventRepository extends ServiceEntityRepository
      * @param title // done
      * @param city // done
      * @param tgas // done
-     * @param type // not yet
-     * @param rating // not yet
+     * @param type // done
      * @return Event[]
      */
     public function filterEvent(array $query) : array

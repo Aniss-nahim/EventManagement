@@ -104,6 +104,7 @@ class Event
 
     /**
      * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="participatedEvent", orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false)
      */
     private $participations;
 

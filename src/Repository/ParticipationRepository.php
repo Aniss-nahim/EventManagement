@@ -6,10 +6,6 @@ use App\Entity\Participation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\Query\Expr\OrderBy;
-use App\Entity\Event;
-use App\Entity\User;
-
 /**
  * @method Participation|null find($id, $lockMode = null, $lockVersion = null)
  * @method Participation|null findOneBy(array $criteria, array $orderBy = null)
@@ -27,18 +23,15 @@ class ParticipationRepository extends ServiceEntityRepository
      * Find participations by user and type
      * @return Particupation[]
      */
-    public function findByUserAndType($userId, $participationType)
+    public function findByUserAndType($userId, $type)
     {
-        $qb = $this->createQueryBuilder('p');
-        
-        $qb = $qb->innerJoin('App\Entity\User', 'u', Join::WITH, 'u = p.participantUser')
+        $qb = $this->createQueryBuilder('p')
+            ->innerJoin('App\Entity\User','u', Join::WITH, 'p.participantUser = u')
             ->innerJoin('App\Entity\Event', 'e', Join::WITH, 'p.participatedEvent = e')
-            ->where(
-                $qb->expr()->andX(
-                    $qb->expr()->eq('p.type', $participationType),
-                    $qb->expr()->eq('p.participantUser.id', $userId)
-                ),
-            )->orderBy('e.createdAt', 'DESC');
+            ->where('u.id = :id')
+            ->andWhere('p.type = :type')
+            ->setParameters([':id' => $userId, ':type' => $type])
+            ->orderBy('p.date', 'DESC');
         
         return $qb->getQuery()->getResult();
     }
