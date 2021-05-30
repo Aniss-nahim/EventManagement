@@ -8,8 +8,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class EventType extends AbstractType
@@ -28,10 +26,9 @@ class EventType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd h:m:s'
             ])
-            ->add('state', TextType::class)
             ->add('city', TextType::class)
             ->add('address', TextType::class)
-            ->add('coverImage', FileType::class)
+            ->add('coverImage', TextType::class)
         ;
     }
 

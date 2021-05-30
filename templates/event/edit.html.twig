@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{parent()}} | Event edit {% endblock %}
+{% form_theme eventForm 'bootstrap_4_layout.html.twig' %}
+{% block body %}
+
+<div class="card">
+
+    <div class="card-header bg-white text-center">
+        <h2>Event</h2>
+    </div>
+
+    <img src='/storage/events/{% if event.coverImage != "default.png" %}{{ event.coverImage }}{% else %}default.png{% endif %}'/>
+
+    <div class="card-body">
+        <div class="container-fluid">
+            {{ form_start(eventForm) }}
+            <div class="alert-danger">
+                {{ form_errors(eventForm) }}
+            </div>
+            <div class="form-row justify-content-center">
+                <div class="col-sm-8 form-group">
+                    <button class="btn btn-success btn-block" type="submit">Update</button>
+                </div>
+            </div>
+            {{ form_end(eventForm) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

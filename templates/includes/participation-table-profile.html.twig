@@ -1,0 +1,101 @@
+{% if goingList %}
+<div class="overflow-auto" style="height: 500px;">
+    <h2>Going</h2>
+    {% for participation in goingList %}
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-1">
+                        <img class="rounded-circle border-success" style="height: 40px; width: 40px;" src="{{asset('/storage/profiles/default.jpg')}}" alt="event creator" />
+                    </div>
+                    <div class="col-11">
+                        <p class="lead m-0 ml-2"> 
+                            {{ participation.participatedEvent.owner.firstName }} 
+                            {{ participation.participatedEvent.owner.lastName }}
+                        </p>
+                        <small class="m-0 ml-2"><i class="fas fa-clock"></i> {{ participation.participatedEvent.startDate |date('Y-m-d') }} </small><br/>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <p class="lead m-0 ml-2">
+                                <strong>{{ participation.participatedEvent.title }}</strong> 
+                            </p>
+                            <p>{{ participation.participatedEvent.score }}</p>
+                        </div>
+                    </div>            
+                </div>
+                <a class="btn btn-primary stretched-link" href="{{path('event', {id: participation.participatedEvent.id } )}}">View</a>
+                <a class="btn btn-danger" href="{{path('event.participation.delete', {id: participation.id } )}}">Delete</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if interestedList %}
+    <h2>Interested</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th> Date </th>
+            <th> </th>
+            <th> Title </th>
+            <th> Starts at </th>
+            <th> Ends at </th>
+            <th> Owner </th>
+            <th> Rating </th>
+            <th>  </th>
+            <th>  </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for participation in interestedList %}
+            <tr>
+                <td>{{ participation.date |date('Y-m-d') }}</td>
+                <td><img class="userImage" src="/storage/events/{% if participation.participatedEvent.coverImage != "default.png" %}{{ participation.participatedEvent.coverImage }}{% else %}default.png{% endif %}"/></td>
+                <td>{{ participation.participatedEvent.title }}</td>
+                <td>{{ participation.participatedEvent.startDate |date('Y-m-d') }}</td>
+                <td>{{ participation.participatedEvent.endDate |date('Y-m-d') }}</td>
+                <td>{{ participation.participatedEvent.owner.firstName }}</td>
+                <td>{{ participation.participatedEvent.score }}</td>
+                <td><a class="btn btn-primary" href="{{path('event', {id: participation.participatedEvent.id } )}}">View</a></td>
+                <td><a class="btn btn-danger" href="{{path('event.participation.delete', {id: participation.id } )}}">Delete</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+{% if likeList %}
+    <h2>Like</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th> Date </th>
+            <th> </th>
+            <th> Title </th>
+            <th> Starts at </th>
+            <th> Ends at </th>
+            <th> Owner </th>
+            <th> Rating </th>
+            <th>  </th>
+            <th>  </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for participation in likeList %}
+            <tr>
+                <td>{{ participation.date |date('Y-m-d') }}</td>
+                <td><img class="userImage" src="/storage/events/{% if participation.participatedEvent.coverImage != "default.png" %}{{ participation.participatedEvent.coverImage }}{% else %}default.png{% endif %}"/></td>
+                <td>{{ participation.participatedEvent.title }}</td>
+                <td>{{ participation.participatedEvent.startDate |date('Y-m-d') }}</td>
+                <td>{{ participation.participatedEvent.endDate |date('Y-m-d') }}</td>
+                <td>{{ participation.participatedEvent.owner.firstName }}</td>
+                <td>{{ participation.participatedEvent.score }}</td>
+                <td><a class="btn btn-primary" href="{{path('event', {id: participation.participatedEvent.id } )}}">View</a></td>
+                <td><a class="btn btn-danger" href="{{path('event.participation.delete', {id: participation.id } )}}">Delete</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}

@@ -1,0 +1,25 @@
+<div>
+    <form action="{{ path('event', {'id': event.object.id})}}" class="star-rating" method="get">
+        <span class="score" >({{ event.ratingNumber }})</span>
+        <span class="count" >{{ event.object.score }}</span>
+        <input type="radio" id="5-stars" name="rating" value="5" {% if event.scoreRounded==5 %} checked="checked"{% endif %}/>
+        <label for="5-stars" class="star">&#9733;</label>
+        <input type="radio" id="4-stars" name="rating" value="4" {% if event.scoreRounded==4 %} checked="checked"{% endif %}/>
+        <label for="4-stars" class="star">&#9733;</label>
+        <input type="radio" id="3-stars" name="rating" value="3" {% if event.scoreRounded==3 %} checked="checked"{% endif %}/>
+        <label for="3-stars" class="star">&#9733;</label>
+        <input type="radio" id="2-stars" name="rating" value="2" {% if event.scoreRounded==2 %} checked="checked"{% endif %}/>
+        <label for="2-stars" class="star">&#9733;</label>
+        <input type="radio" id="1-star" name="rating" value="1" {% if event.scoreRounded==1 %} checked="checked"{% endif %}/>
+        <label for="1-star" class="star">&#9733;</label>
+        <input type="submit" name="rating">
+    </form>
+</div>
+<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+<script>
+    $(document).ready(function() {
+        $('input[name=rating]').change(function(){
+            $('form').submit();
+        });
+    });
+</script>

@@ -1,0 +1,79 @@
+{% if event.owner %}
+{% if event.goingList %}
+<h2>Going</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th> Date </th>
+            <th> </th>
+            <th> Name </th>
+            <th> Email </th>
+            <th> Participation </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for participation in event.goingList %}
+            <tr>
+                <td>{{ participation.date |date('Y-m-d') }}</td>
+                <td><img class="userImage" src="/storage/profiles/{% if participation.participantUser.image != "default.jpg" %}{{ participation.participantUser.image }}{% else %}default.jpg{% endif %}"/></td>
+                <td>{{ participation.participantUser.firstName }} {{ participation.participantUser.lastName }}</td>
+                <td>{{ participation.participantUser.email }}</td>
+                <td>{{ participation.type }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if event.interestedList %}
+    <h2>Interested</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th> Date </th>
+            <th> </th>
+            <th> Name </th>
+            <th> Email </th>
+            <th> Participation </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for participation in event.interestedList %}
+            <tr>
+                <td>{{ participation.date |date('Y-m-d') }}</td>
+                <td><img class="userImage" src="/storage/profiles/{% if participation.participantUser.image != "default.jpg" %}{{ participation.participantUser.image }}{% else %}default.jpg{% endif %}"/></td>
+                <td>{{ participation.participantUser.firstName }} {{ participation.participantUser.lastName }}</td>
+                <td>{{ participation.participantUser.email }}</td>
+                <td>{{ participation.type }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+{% if event.likeList %}
+    <h2>Like</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th> Date </th>
+            <th> </th>
+            <th> Name </th>
+            <th> Email </th>
+            <th> Participation </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for participation in event.likeList %}
+            <tr>
+                <td>{{ participation.date |date('Y-m-d') }}</td>
+                <td><img class="userImage" src="/storage/profiles/{% if participation.participantUser.image != "default.jpg" %}{{ participation.participantUser.image }}{% else %}default.jpg{% endif %}"/></td>
+                <td>{{ participation.participantUser.firstName }} {{ participation.participantUser.lastName }}</td>
+                <td>{{ participation.participantUser.email }}</td>
+                <td>{{ participation.type }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endif %}

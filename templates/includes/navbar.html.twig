@@ -33,7 +33,7 @@
                         <img class="rounded-circle border-success userImage" src="{{asset('storage/profiles/' ~ app.user.image)}}" alt="{{app.user.lastName}} profile image" /> {{app.user.firstName}} {{app.user.lastName}}
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="dropProfile">
-                        <a class="dropdown-item" href="#">View Profile</a>
+                        <a class="dropdown-item" href="{{ path('profile', {id: app.user.id})}}">View Profile</a>
                         <a class="dropdown-item" href="#">Settings</a>
                         {% if app.user %}
                             <div class="dropdown-divider"></div>
