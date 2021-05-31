@@ -8,7 +8,7 @@
                             <img class="rounded-circle border-success" style="height: 40px; width: 40px;" :src="userImage" alt="event creator" />
                         </div>
                         <div class="col-9">
-                            <p class="lead m-0 ml-2">{{userName}}</p>
+                            <a class="lead m-0 ml-2 text-decoration-none text-dark" :href="'/profile/'+event.owner.id">{{userName}}</a>
                             <small class="m-0 ml-2"><i class="fas fa-clock"></i> {{ createdAt }}</small><br/>
                         </div>
                         <div class="col-1">
@@ -16,15 +16,17 @@
                                 <i class="fas fa-ellipsis-h"></i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-lg-right" :aria-labelledby="'explore-'+event.id">
-                                <a class="dropdown-item" href="#">View</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#"> Somthing</a>
+                                <a class="dropdown-item" :href="'/event/'+event.id">View</a>
+                                <div v-if="myEvent">
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-danger" href="#" @click="unpublish(event.id)"> Unpublish</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <p class="lead m-0 ml-2"> <i class="fas fa-bullhorn fa-xs"></i> <a href="#" class="text-decoration-none text-success"><strong>{{ event.title }}</strong> </a> </p>
+                            <p class="lead m-0 ml-2"> <i class="fas fa-bullhorn fa-xs"></i> <a :href="'/event/'+event.id" class="text-decoration-none text-success"><strong>{{ event.title }}</strong> </a> </p>
                         </div>
                     </div>
                 </div>
@@ -61,10 +63,13 @@
 
 <script>
     var moment  = require('moment');
+    import axios from 'axios';
+    import {eventListener} from '../app';
 
     export default {
         name : 'Event',
         props : {
+            uid : String,
             event : Object,
             userimages : String,
             eventcovers: String
@@ -73,6 +78,31 @@
         data(){
             return{
 
+            }
+        },
+
+        created(){
+            
+        },
+
+        methods : {
+            unpublish(eventId){
+                axios.get('/event/unpublish/'+eventId)
+                .then(response => {
+                    eventListener.$emit('show-toast', {
+                        title : 'Unpublished',
+                        message : 'Your event is currently unpublished',
+                        color : "success"
+                    });
+                    this.$emit('removeEvent', eventId);
+                })
+                .catch(error => {
+                    eventListener.$emit('show-toast', {
+                        title : 'Error',
+                        message : 'Please try again later',
+                        color : "danger"
+                    })
+                })
             }
         },
 
@@ -99,6 +129,10 @@
 
             eventCover : function(){
                 return this.eventcovers+'/'+this.event.coverImage;
+            },
+
+            myEvent : function(){
+                return parseInt(this.uid) == this.event.owner.id
             }
 
         },

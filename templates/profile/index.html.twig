@@ -21,10 +21,15 @@
 <div class="container-fluid">
     <div class="row my-4">
         <div class="col-sm-12 col-md-4">
-            <h2 class="text-center">Profaile Management</h2>
+            {% if app.user.id == user.id %}
+                <h2 class="text-center">Profaile Management</h2>
+            {% else %}
+            <h2 class="text-center">Public Informations</h2>
+            {% endif %}
             <hr>
             <div class="card">    
                 <div class="card-body">
+                {% if app.user.id == user.id %}
                     {{ form_start(profileForm) }}
                     <div class="alert-danger">
                         {{ form_errors(profileForm) }}
@@ -40,8 +45,51 @@
                         </div>
                     </div>
                     {{ form_end(profileForm) }}
+                {% else %}
+                    <div class="container">
+                        <div class="row justify-content-start">
+                            <h5 class="mb-3"> <i class="fas fa-user-circle"></i> Name <span class="lead">{{user.firstName}} {{user.lastName}}</span></h5>
+                            <h5 class="mb-3"> <i class="fas fa-envelope"></i> Email <span class="lead">{{user.email}}</span></h5>
+                            <h5 class="mb-3"> <i class="fas fa-calendar-day"></i> Birthdate <span class="lead">{{user.birthdate|date('Y-m-d')}}</span></h5>
+                            <h5 class="mb-3"> <i class="fas fa-calendar-day"></i> Registration date <span class="lead">{{user.registrationDate|date('Y-m-d')}}</span></h5>
+                        </div>
+                    </div>
+                   {% endif %}
                 </div>
             </div>
+            {% if app.user.id == user.id %}
+                <div class="card my-3">
+                    <div class="m-3">
+                        <h2>Unpublished Events</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">created At</th>
+                                    <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for event in unpublishedEvents %}
+                                    <tr>
+                                        <td>{{ loop.index}}</td>
+                                        <td class="text-truncate">{{ event.title}}</td>
+                                        <td><p class="lead">{{ event.createdAt|date('Y-m-d')}}</p></td>
+                                        <td>
+                                            <a class="btn btn-success btn-sm" href="{{path('event', {id:event.id})}}"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         </div>
         <div class="col-sm-12 col-md-8">
             <h2 class="text-center">History</h2>
@@ -53,8 +101,4 @@
             </div>
         </div>
     </div>
-
-    
-
-
 {% endblock %}

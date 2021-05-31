@@ -13,10 +13,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -337,5 +333,23 @@ class EventController extends AbstractController
         }
 
         return $this->json(['success' => true, 'count'=> count($events), 'data' => $events], 200, [], ['groups' => 'event:read']);
+    }
+
+    /**
+     * @Route("/event/unpublish/{id}", name="unpublish_event", methods={"GET"}, requirements={"id" = "\d+"})
+     */
+    public function unpublish (Event $event) : Response
+    {
+        $user = $this->getUser();
+
+        if($user->getId() == $event->getOwner()->getId()){
+            $event->setState("Created");
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($event);
+            $entityManager->flush();
+            return $this->json(['success' => true], 200);
+        }
+
+        return $this->json(['success' => false], 401);
     }
 }

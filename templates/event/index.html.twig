@@ -56,7 +56,8 @@
             <events eventsUrl={{path('fetch_events')}} 
                     filterEventUrl={{path('event_filter')}} 
                     userImages={{asset('storage/profiles')}} 
-                    eventCovers={{asset('storage/events')}}>
+                    eventCovers={{asset('storage/events')}}
+                    userid={{ app.user.id }}>
             </events>
         </div>
     </div>

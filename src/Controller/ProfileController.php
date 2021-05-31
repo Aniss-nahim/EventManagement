@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\ProfileType;
 use App\Repository\ParticipationRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Repository\EventRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +21,7 @@ class ProfileController extends AbstractController
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @return Response
      */
-    public function index(User $user, Request $request,ParticipationRepository $participationRepo, UserPasswordEncoderInterface $passwordEncoder): Response
+    public function index(User $user, Request $request, EventRepository $eventRepo, ParticipationRepository $participationRepo, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         $form = $this->createForm(ProfileType::class,$user);
 
@@ -38,13 +38,15 @@ class ProfileController extends AbstractController
         $goingList = $participationRepo->findByUserAndType($user->getId(), "Going");
         $interestedList = $participationRepo->findByUserAndType($user->getId(), "Interested");
         $likeList = $participationRepo->findByUserAndType($user->getId(), "Like");
+        $unpublishedEvents = $eventRepo->findUserUnpublishedEvents($user->getId());
 
         return $this->render('profile/index.html.twig', [
             'profileForm' => $form->createView(),
             'user' => $user,
             'goingList' => $goingList,
             'interestedList' => $interestedList,
-            'likeList' => $likeList
+            'likeList' => $likeList,
+            'unpublishedEvents' => $unpublishedEvents
         ]);
     }
 }

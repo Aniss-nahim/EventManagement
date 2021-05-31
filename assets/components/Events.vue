@@ -11,7 +11,7 @@
                 </div>
             </div>
             <div v-else-if="events.length > 0" v-for="event in events" :key="event.id" class="row justify-content-center mb-3">
-                <Event :event="event" :userimages="userimages" :eventcovers="eventcovers"/>
+                <Event :event="event" :userimages="userimages" :uid="userid" :eventcovers="eventcovers" @removeEvent="remove"/>
             </div>
             <div v-else>
                 <div class="mt-5 row justify-content-center align-items-center">
@@ -39,7 +39,8 @@
             eventsurl : String,
             userimages : String,
             eventcovers : String,
-            filtereventurl : String
+            filtereventurl : String,
+            userid : String
         },
         components : {
             Event,
@@ -83,8 +84,8 @@
                 })
             },
 
-            addEvent(event){
-
+            remove(eventId){
+               this.events = this.events.filter( event => event.id != eventId);
             }
         }
     }

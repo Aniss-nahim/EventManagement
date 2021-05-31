@@ -3,8 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Event;
-use App\Entity\User;
-use App\Entity\Tag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Expr\OrderBy;
@@ -123,6 +121,24 @@ class EventRepository extends ServiceEntityRepository
             $order = new OrderBy('e.'.$query['orderBy'], $query['order']);
             $qb = $qb->orderBy($order);
         }
+
+        return $qb->getQuery()->getResult();
+    }
+
+
+    /**
+     * Query user unpublished event i.e events with state Created
+     * @return Event[]
+     */
+    public function findUserUnpublishedEvents($userId) : array
+    {
+        $qb = $this->createQueryBuilder('e');
+        $qb->select('e')
+            ->innerJoin('App\Entity\User', 'u', Join::WITH, 'e.owner = u')
+            ->where('u.id = :userId')
+            ->andWhere("e.state = 'Created'")
+            ->setParameter(':userId', $userId)
+            ->orderBy('e.createdAt', 'desc');
 
         return $qb->getQuery()->getResult();
     }
