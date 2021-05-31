@@ -20,7 +20,7 @@ class RatingRepository extends ServiceEntityRepository
         parent::__construct($registry, Rating::class);
     }
 
-    public function findRatingWithAll($userId, $eventId) : Rating
+    public function findRatingWithAll($userId, $eventId) :? Rating
     {
         $qb = $this->createQueryBuilder('r');
         
