@@ -91,107 +91,34 @@ class EventController extends AbstractController
         }
     }
 
-
-
     /**
      * @Route("/event/{id}", name="event", methods={"GET"}, requirements={"id" = "\d+"})
-     * @param Event $event
-     * @param Request $request
      * @param EventRepository $eventRepo
+     * @param ParticipationRepository
      * @return Response
      */
-    public function show(Event $event, Request $request, RatingRepository $ratingRepo,  ParticipationRepository $participationRepo) : Response
+    public function show($id, EventRepository $eventRepo,   ParticipationRepository $participationRepo) : Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
+        
+        $event = $eventRepo->findOneWithAll($id);
+        
         /**
          * @var User $user
          */
         $user = $this->getUser();
 
-        /**
-         * @var boolean is true if the current user is the owner of the event
-         */
-        $owner = false;
-
         //if event exists
         if($event){
-
-            //deal with rating score
-            $rating_score = (int)$request->query->get("rating");
-            $entityManager = $this->getDoctrine()->getManager();
-
-            if($rating_score!=null) {
-
-                $rateID = null;
-                $ratings = $ratingRepo->findAll();
-
-                //we check if rating had already been done or not
-                foreach($ratings as $rate){
-                    if($rate->getCritic()->getId()==$user->getId() && $rate->getCiriticSubject()->getId()==$event->getId()){
-                        $rateID = $rate->getId();
-                    }
-                }
-
-                //we want to update our rating of the event
-                if($rateID!=null){
-                    $rating = $ratingRepo->find($rateID);
-                    $rating->setRatingScore($rating_score);
-                    $entityManager->persist($rating);
-                }
-                else{
-                    $rating = new Rating();
-                    $rating->setCritic($user);
-                    $rating->setCiriticSubject($event);
-                    $rating->setRatingScore($rating_score);
-
-                    //persist it first so that doctrine sets it's id
-                    $entityManager->persist($rating);
-
-                    //ORM persist rating to both ManyToOne entities
-                    $user->addRating($rating);
-                    $event->addRating($rating);
-                }
-
-                $entityManager->flush();
-                dump($rating);
-            }
-
-            dump($user,$event);
-
-            //check if current user is owner of event
-            if($event->getOwner()->getId()==$user->getId()){
-                $owner = true;
-            }
-
-            //count participations
-
-            $goingList = new ArrayCollection();
-            $interestedList = new ArrayCollection();
-            $likeList = new ArrayCollection();
-            $participations = $participationRepo->findAll();
-            foreach ($participations as $part){
-                if($part->getParticipatedEvent()->getId()==$event->getId()) {
-                    if ($part->getType() == "Going") {
-                        $goingList->add($part);
-                    }
-                    if ($part->getType() == "Interested"){
-                        $interestedList->add($part);
-                    }
-                    if($part->getType()=="Like"){
-                        $likeList->add($part);
-                    }
-                }
-            }
-
+            //count participations grouped by type
+            $goingList = $participationRepo->findByEventAndType($event->getId(), "Going");
+            $interestedList = $participationRepo->findByEventAndType($event->getId(), "Interested");
+            $likeList = $participationRepo->findByEventAndType($event->getId(), "Like");
+            
              return $this->render('event/show.html.twig', [
-                 'event' => ['owner' => $owner,
+                 'event' => [
                      'object' => $event,
                      'scoreRounded' => round($event->getScore()),
                      'ratingNumber' => count($event->getRatings()),
-                     'goingNumber' => $goingList->count() ,
-                     'interestedNumber' => $interestedList->count(),
-                     'likeNumber' => $likeList->count(),
                      'goingList' => $goingList,
                      'interestedList' => $interestedList,
                      'likeList' => $likeList
@@ -199,6 +126,44 @@ class EventController extends AbstractController
              ]);
         }
         return $this->redirectToRoute('events');
+    }
+
+    /**
+     * @Route("/event/{id}/rating", name="event.rating", methods={"GET"}, requirements={"id" = "\d+"})
+     * @param Request
+     * @param Event
+     * @param RatingRepository
+     * @return Response
+     */
+    public function rating(Event $event, Request $request, RatingRepository $ratingRepo) : Response
+    {
+        $user = $this->getUser();
+         //deal with rating score
+         $rating_score = intVal($request->query->get("rating"));
+         $entityManager = $this->getDoctrine()->getManager();
+
+         if($rating_score!=null) {
+             $rating = $ratingRepo->findRatingWithAll($user->getId(), $event->getId());
+             //we want to update our rating of the event
+
+             if(!$rating){
+                 $rating = new Rating();
+                 $rating->setCritic($user);
+                 $rating->setCiriticSubject($event);
+                 //ORM persist rating to both ManyToOne entities
+                 $user->addRating($rating);
+                 $event->addRating($rating);
+             }
+             
+             $rating->setRatingScore($rating_score);
+
+             //persist it first so that doctrine sets it's id
+             $entityManager->persist($rating);
+
+             $entityManager->flush();
+         }
+
+        return $this->redirectToRoute('event', ["id" => $event->getId()]);
     }
 
     /**
@@ -224,6 +189,26 @@ class EventController extends AbstractController
             'eventForm' => $form->createView(),
             'event' => $event
         ]);
+    }
+
+    /**
+     * @Route("/event/delete/{id}", name="event.delete", methods={"GET"}, requirements={"id" = "\d+"})
+     * @param Event
+     * @param Request
+     * @return Response
+     */
+    public function delete(Event $event) : Response
+    {
+        $user = $this->getUser();
+        if($user->getId() === $event->getOwner()->getId()){
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($event);
+            $entityManager->flush();
+            
+            return $this->redirectToRoute('events');
+        }
+
+        return $this->redirectToRoute("event", ['id' => $event->getId()]);
     }
 
     /**
@@ -352,4 +337,24 @@ class EventController extends AbstractController
 
         return $this->json(['success' => false], 401);
     }
+
+    /**
+     * @Route("/event/publish/{id}", name="publish_event", methods={"GET"}, requirements={"id" = "\d+"})
+     */
+    public function publish (Event $event) : Response
+    {
+        $user = $this->getUser();
+
+        if($user->getId() == $event->getOwner()->getId()){
+            $event->setState("Published");
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($event);
+            $entityManager->flush();
+            
+            return $this->redirectToRoute('events');
+        }
+
+        return $this->redirectToRoute('event', ["id"=> $event->getId()]);
+    }
+
 }

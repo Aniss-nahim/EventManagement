@@ -41,6 +41,22 @@ class EventRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return Event
+     */
+    public function findOneWithAll($eventId)
+    {
+        $qb = $this->createQueryBuilder('e');
+        
+        $qb = $qb->innerJoin('App\Entity\User', 'u', Join::WITH, 'u = e.owner')
+            ->innerJoin('App\Entity\EventTag', 'et', Join::WITH, 'et.taggedEvent = e')
+            ->innerJoin('App\Entity\Tag', 't', Join::WITH, 't = et.tag')
+            ->where("e.id = :eventId")
+            ->setParameter(":eventId", $eventId);
+        
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
      * Event filtering with query builder
      * @param startsOn // done
      * @param endsOn // done

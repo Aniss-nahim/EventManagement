@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div class="card-body p-0">
-                    <img class="img-fluid" :src="eventCover" alt="" />
+                    <img class="img-fluid" :src="eventCover" alt="event" />
                     <div class="alert m-2" role="alert">
                         <div class="row">
                             <div class="col-sm-12">

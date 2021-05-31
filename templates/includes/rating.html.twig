@@ -1,6 +1,6 @@
 <div>
-    <form action="{{ path('event', {'id': event.object.id})}}" class="star-rating" method="get">
-        <span class="score" >({{ event.ratingNumber }})</span>
+    <form action="{{ path('event.rating', {'id': event.object.id})}}" class="star-rating rounded-pill" method="get">
+        <span class="score text-dark" >({{ event.ratingNumber }})</span>
         <span class="count" >{{ event.object.score }}</span>
         <input type="radio" id="5-stars" name="rating" value="5" {% if event.scoreRounded==5 %} checked="checked"{% endif %}/>
         <label for="5-stars" class="star">&#9733;</label>

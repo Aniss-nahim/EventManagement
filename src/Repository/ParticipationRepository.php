@@ -36,6 +36,23 @@ class ParticipationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * Find participations by user and type
+     * @return Particupation[]
+     */
+    public function findByEventAndType($eventId, $type)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->innerJoin('App\Entity\User','u', Join::WITH, 'p.participantUser = u')
+            ->innerJoin('App\Entity\Event', 'e', Join::WITH, 'p.participatedEvent = e')
+            ->where('e.id = :id')
+            ->andWhere('p.type = :type')
+            ->setParameters([':id' => $eventId, ':type' => $type])
+            ->orderBy('p.date', 'DESC');
+        
+        return $qb->getQuery()->getResult();
+    }
+
     // /**
     //  * @return Participation[] Returns an array of Participation objects
     //  */

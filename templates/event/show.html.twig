@@ -3,31 +3,94 @@
 {% block title %} {{ parent() }} | {{event.object.title}} {% endblock %}
 
 {% block body %}
-    <div class="container" style="padding-top: 100px;"></div>
 
-    <div class="card">
-
-        <div class="card-header">
-            <h1>{{event.object.title}}</h1>
-            {% include 'includes/rating.html.twig' %}
-            <div class="row">
-                <div class="col-4"> <a href="{{ path("event.participate",{"id":event.object.id,"participationType":"Going"}) }}" class="btn btn-secondary">Going ({{ event.goingNumber }})</a> </div>
-                <div class="col-4"> <a href="{{ path("event.participate",{"id":event.object.id,"participationType":"Interested"}) }}" class="btn btn-secondary">Interested ({{ event.interestedNumber }})</a> </div>
-                <div class="col-4"> <a href="{{ path("event.participate",{"id":event.object.id,"participationType":"Like"}) }}" class="btn btn-primary"><i class="fas fa-heart"></i>Like ({{ event.likeNumber }})</a> </div>
+<div class="first-container container-fluid mb-3">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <div class="row align-items-center">
+                        <div class="col-1">
+                            <img class="rounded-circle border-success" style="height: 40px; width: 40px;" src="{{asset('storage/profiles/' ~ event.object.owner.image)}}" alt="event creator" />
+                        </div>
+                        <div class="col-7">
+                            <a class="lead m-0 ml-2 text-decoration-none text-dark" href="/profile/{{event.object.owner.id}}">
+                                {{event.object.owner.firstName}}  {{event.object.owner.lastName}} 
+                            </a>
+                            <p class=" text-muted m-0 ml-2"><i class="fas fa-clock"></i> {{event.object.createdAt|date('Y-m-d')}}</p>
+                        </div>
+                        <div class="col-4">
+                            {% include 'includes/rating.html.twig' %}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h3 class="text-success">{{event.object.title}}</h3>
+                            <h6> <i class="fas fa-map-marker-alt"></i> {{event.object.address}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row justify-content-btween m-2">
+                        <div class="col-sm-6">
+                            <p> <i class="fas fa-calendar-day pr-2"></i><strong>Starts On : </strong>{{ event.object.startDate|date('Y-m-d') }}</p>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <p> <i class="fas fa-calendar-day pr-2"></i><strong>Ends On : </strong> {{ event.object.endDate|date('Y-m-d') }}</p>
+                        </div>
+                    </div>    
+                    <img class="img-fluid" src="{{asset('storage/events/' ~ event.object.coverImage)}}"/>
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="row">
+                        <div class="col-4"> 
+                            <a href="{{ path("event.participate",{"id":event.object.id,"participationType":"Like"}) }}" class="btn btn-primary btn-block">
+                                <i class="fas fa-thumbs-up"></i> Like <span class="badge badge-light">{{ event.likeList|length }}</span>
+                            </a> 
+                        </div>
+                        <div class="col-4"> 
+                            <a href="{{ path("event.participate",{"id":event.object.id,"participationType":"Going"}) }}" class="btn btn-success btn-block">
+                                Going <span class="badge badge-light">{{ event.goingList|length }}</span>
+                            </a>
+                        </div>
+                        <div class="col-4"> 
+                            <a href="{{ path("event.participate",{"id":event.object.id,"participationType":"Interested"}) }}" class="btn btn-warning btn-block">
+                                Interested  <span class="badge badge-light">{{ event.interestedList|length }}</span>
+                            </a> 
+                        </div>
+                    </div>
+                            
+                </div>
             </div>
         </div>
-
-        <img class="card-img-top" src='/storage/events/{% if event.object.coverImage != "default.png" %}{{ event.object.coverImage }}{% else %}default.png{% endif %}'/>
-
-        <div class="card-body">
-            <h3>{{ event.object.owner.firstName }} {{ event.object.owner.lastName }}</h3>
-            <div>{{ event.object.startDate|date('Y-m-d') }} to {{ event.object.endDate|date('Y-m-d') }}</div>
-
-            {% if event.owner == true %}<a class="btn-info btn" href="{{ path("event.edit",{"id":event.object.id}) }}">Edit</a>{% endif %}
-
+        <div class="col-sm-12 col-md-6">
+            {% if app.user.id == event.object.owner.id %}
+                <div class="row justify-content-end mb-4">
+                    <a class="btn-info btn mr-2" href="{{ path("event.edit",{"id":event.object.id}) }}">Edit</a>
+                    <a class="btn-danger btn mr-2" href="{{ path("event.delete",{"id":event.object.id}) }}">Delete</a>
+                    {% if event.object.state == "Created" %}
+                        <a class="btn-success btn mr-2" href="{{path('publish_event', { "id" : event.object.id})}}">Publish</a>
+                    {% else %}
+                        <a class="btn-warning btn mr-2" href="{{path('unpublish_event', { "id" : event.object.id}) }}">Unpublish</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+            <h2>Description</h2>
+            <hr>
+            <p>{{event.object.description}}</p>
+            <div class="row">
+                {% for eventTag in event.object.eventTags %}
+                <span class="badge badge-pill badge-success m-2">{{eventTag.tag.tagName}}</span>
+                {% endfor %}
+            </div>
+            <h2 class="mt-4">Participations</h2>
+            <hr>
+            {% include 'includes/participation-table-event.html.twig' %}
         </div>
     </div>
+</div>
 
-    {% include 'includes/participation-table-event.html.twig' %}
+
 
 {% endblock %}

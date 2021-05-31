@@ -103,7 +103,7 @@ class Event
     private $score = 0;
 
     /**
-     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="participatedEvent", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="participatedEvent", cascade={"remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false)
      */
     private $participations;
@@ -116,12 +116,12 @@ class Event
     private $owner;
 
     /**
-     * @ORM\OneToMany(targetEntity=Rating::class, mappedBy="ciriticSubject", cascade={"persist"},  orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Rating::class, mappedBy="ciriticSubject", cascade={"persist", "remove"},  orphanRemoval=true)
      */
     private $ratings;
 
     /**
-     * @ORM\OneToMany(targetEntity=EventTag::class, mappedBy="taggedEvent", cascade={"persist"},  orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=EventTag::class, mappedBy="taggedEvent", cascade={"persist", "remove"},  orphanRemoval=true)
      * @Groups("event:read")
      */
     private $eventTags;

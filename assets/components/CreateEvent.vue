@@ -105,7 +105,7 @@ export default {
                 description : "",
                 startDate : "",
                 endDate : "",
-                state : "Default state",
+                state : "Created",
                 street: "",
                 country : "",
                 city : "",
