@@ -32,5 +32,21 @@ new Vue({
     el : "#app",
 });
 
+
+// handler uploding event
+let form = document.getElementById("uploadImageForm");
+if(form){
+    let inputImage = $('#image');
+    let saveBtn = $('#saveImage');
+    saveBtn.click(() => {
+        form.submit();
+    });
+    inputImage.change(() => {
+        if(inputImage[0].files.length != 0){
+            saveBtn.show();
+        }
+    });
+}
+
 // Images
 import logo from './images/app/EventLogo.svg';

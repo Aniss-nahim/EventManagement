@@ -5,12 +5,26 @@
 {% block body %}
 
 <div class="profile-wallpiper p-4">
-    <div class="first-container container">
+    <div class="first-container container text-center">
         <div class="row justify-content-center">
-            <img class="rounded-circle border" src="{{asset('/storage/profiles/' ~ user.image)}}" style="width: 150px ;height: 150px" alt="Card image cap">
-        </div>
-        <div class="row">
-            <div class="col-sm-12 text-center">
+            <div class="col-12" style="max-height: 160px;">
+                <img class="rounded-circle img-thumbnail" src="{{asset('/storage/profiles/' ~ user.image)}}" style="width: 150px ;height: 150px" alt="Responsive Image">
+                <form id="uploadImageForm" method="POST" action="{{path('profile.upload', {'id' : user.id})}}" enctype="multipart/form-data">
+                    <div class="form-row justify-content-center m-0">
+                       <div class="col-sm-6 form-group">
+                           <label for="image" class="btn btn-success rounded-pill border border-white" style="cursor: pointer;">
+                               <i class="fas fa-camera"></i>
+                               <input type="file" id="image" style="display: none; width: 10px; cursor: pointer;" name="user_image"/>
+                           </label>
+                          
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-light btn-sm rounded-pill text-success" id="saveImage" style="display: none;" >Save</button>
+            </div>
+            <div class="col-12">
                 <h1 class="text-white">{{user.firstName}} {{user.lastName}}</h1>
                 <div class="text-white"> {{user.email}}</div>
             </div>
@@ -101,4 +115,5 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
