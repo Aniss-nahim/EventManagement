@@ -69,7 +69,7 @@ class ProfileController extends AbstractController
             $userImage = $request->files->get('user_image');
 
             if($userImage){
-                $safeFileName = $user->getFirstName().'_'.$user->getLastName().'_'.$user->getId().'.'.$userImage->guessExtension();;
+                $safeFileName = 'user_'.$user->getId().'.'.$userImage->guessExtension();;
 
                 try{
                     // move the image
